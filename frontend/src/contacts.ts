@@ -20,8 +20,8 @@ export async function loadContacts() {
         const res = await fetch("/api/contacts");
 
         const data = await res.json();
-        if(data == "") {
-            outputEl!.textContent = "Din konktaktlista är tom";
+        if(data.length === 0) {
+            outputEl!.textContent = "Din kontaktlista är tom";
         } else {
         const list: Contact[] = data;
         outputEl!.textContent = JSON.stringify(list, null, 2);
