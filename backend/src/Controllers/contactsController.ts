@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import type { Contact } from "./types.js"
-import { getContactsCollection } from "./mongodb.js";
+import type { Contact } from "../types.js"
+import { collections } from "../mongodb.js";
 
 export const createContact = async (req: Request, res: Response) => {
     const { name, phone } = req.body ?? {};
@@ -9,17 +9,17 @@ export const createContact = async (req: Request, res: Response) => {
         phone: phone.trim(),
         createdAt: new Date(),
     };
-    const result = await getContactsCollection().insertOne(doc);
+    const result = await collections.contacts!.insertOne(doc);
     res.status(201).json({ ok: true, id: result.insertedId });
-    console.log("Contact added");
+    console.log("Contact created");
 }
 
 export const getContacts = async (req: Request, res: Response) => {
-    const col = getContactsCollection();
-    const items = await col
+    const col = collections.contacts;
+    const items = await col!
         .find({})
         .sort({ createdAt: -1 })
         .toArray();
-
+    console.log("hello from getContacts");
     return res.json(items);
 }

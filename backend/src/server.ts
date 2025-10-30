@@ -1,8 +1,8 @@
-import express from "express";
 import dotenv from "dotenv";
-import { connectDB } from "./mongodb.js"
-
-import { createContact, getContacts } from "./contactsController.js";
+import express from "express";
+import { initDB } from "./mongodb.js"
+import { signup } from "./Controllers/userController.js"
+import { createContact, getContacts } from "./Controllers/contactsController.js";
 
 dotenv.config();
 
@@ -11,7 +11,9 @@ const PORT = 3000;
 
 app.use(express.json());
 
-await connectDB()
+await initDB(); // db innan routes.
+
+app.post('/api/signup', signup);
 
 app.post('/api/contacts', createContact);
 

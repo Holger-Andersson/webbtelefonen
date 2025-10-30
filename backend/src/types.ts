@@ -4,3 +4,10 @@ export type Contact = {
   phone: string;
   createdAt: string | Date;
 };
+
+export type User = {
+  email: string;
+  password: string;
+  role: "user";
+  createdAt: string | Date;
+}
