@@ -7,7 +7,32 @@
     <title>webbtelefonen</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div>
+      <h1>Telefonboken</h1>
+      <div>      
+      <h2>Create User</h2>
+      <form action="post" id="create-form">
+        <label for="create-email">E-Mail</label>
+        <input id="create-email" type="email" for="email">
+        <label for="create-password">Password</label>
+        <input id="create-password" type="password" name="create-password">
+        <input type="submit" value="Create User">
+      </form>
+
+      </div>
+ <h2>Contacts<h2>
+      <form id="contactForm">
+        <label for="name">Namn</label>
+        <input id="name" name="name" placeholder="Namn...">
+        <label for="phone">Telefonnummer</label>
+        <input id="phone" name="phone" placeholder="Telefonnummer..">
+        <button id="addBtn" type="submit">Lägg till kontakt</button>
+      </form>
+ 
+    <div id="loading"></div>
+    <div id="contacts-content"></div>
+</div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

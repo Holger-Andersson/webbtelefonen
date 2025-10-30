@@ -1,23 +1,27 @@
 import './style.css'
 import { createContact, loadContacts } from "./contacts"
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<div>
-  <h1> Telefonboken</h1>
-  <form id="contactForm">
-    <label>Namn</label>
-    <input id="name" placeholder="Namn..."></input>
-    <label>Telefonnummer</label>
-    <input id="phone" placeholder="Telefonnummer.."></input>
-    <button id="addBtn" type="submit">Lägg till kontakt</button>
-  </form>
+const createForm = document.getElementById("create-form");
 
-  <h2>Contacts<h2>
-    <div id="loading"></div>
-    <div id="contacts-content"></div>
-</div>
-`
-  ;
+createForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  let email = ((document.getElementById("create-email") as HTMLInputElement).value);
+  let password = ((document.getElementById("create-password")as HTMLInputElement).value)
+
+  const res = await fetch("/api/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      "email": email,
+      "password": password
+    })
+
+});
+const token = await res.text();
+console.log(token);
+localStorage.setItem("token", token);
+})
 
 const form = document.getElementById("contactForm") as HTMLFormElement;
 
@@ -29,7 +33,7 @@ form.addEventListener("submit", async (e) => {
     const phone = (document.getElementById("phone") as HTMLInputElement).value.trim();
     const data = await createContact(name, phone);
 
-    if ((data).ok) form.reset();
+    if (data.ok) form.reset();
   } catch (err: any) {
     alert(err.message || "kunde inte spara");
   }
