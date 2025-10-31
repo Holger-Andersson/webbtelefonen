@@ -7,7 +7,7 @@ createForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   let email = ((document.getElementById("create-email") as HTMLInputElement).value);
-  let password = ((document.getElementById("create-password")as HTMLInputElement).value)
+  let password = ((document.getElementById("create-password") as HTMLInputElement).value)
 
   const res = await fetch("/api/signup", {
     method: "POST",
@@ -17,10 +17,10 @@ createForm?.addEventListener("submit", async (e) => {
       "password": password
     })
 
-});
-const token = await res.text();
-console.log(token);
-localStorage.setItem("token", token);
+  });
+  const token = await res.text();
+  console.log(token);
+  localStorage.setItem("token", token);
 })
 
 const form = document.getElementById("contactForm") as HTMLFormElement;
@@ -38,5 +38,34 @@ form.addEventListener("submit", async (e) => {
     alert(err.message || "kunde inte spara");
   }
 });
+
+// container.addEventListener("click", async (e) => {
+//   const target = e.target as HTMLElement;
+//   if(target.getAttribute("data-action") !== "delete") return;
+//   const row = target.closest<HTMLElement>("row");
+//   const id = row?.dataset.id;
+//   if(!id) return;
+// })
+
+
+const list = document.getElementById("contacts-list");
+if (list) {
+  list.addEventListener("click", async (event) => {
+    const btn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='delete']");
+    if (!btn) return;
+    const id = btn.dataset.id;
+    console.log(id);
+    const res = await fetch(`/api/deleteContact/${id}`, {
+      method: "DELETE"
+    });
+
+    if (res.ok) {
+      console.log("Kontakten raderad");
+      await loadContacts();
+    }
+
+  })
+
+}
 
 loadContacts();

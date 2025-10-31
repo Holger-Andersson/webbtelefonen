@@ -12,7 +12,7 @@ let db: Db | undefined;
 export const collections: {
     users?: Collection<User>;
     contacts?: Collection<Contact>;
-} = {}; // 
+} = {};
 
 export async function initDB() {
 
@@ -24,12 +24,6 @@ export async function initDB() {
         await client.connect();
         db = client?.db("app");
         console.log("Connected to local MongoDB at mongodb://localhost:27017", db.databaseName);
-        // mongod = await MongoMemoryServer.create(({ instance: { dbName: "test" } }));
-        // const uri = mongod.getUri();
-        // console.log("RUNNING MONGOMEMORYSERVER at ", uri);
-        // client = new MongoClient(uri);
-        // await client.connect();
-        // db = client.db("test")
 
     } else {
         console.log("mem server not running");

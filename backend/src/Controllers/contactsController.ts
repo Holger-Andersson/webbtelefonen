@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import type { Contact } from "../types.js"
+import { ObjectId } from "mongodb"
 import { collections } from "../mongodb.js";
 
 export const createContact = async (req: Request, res: Response) => {
@@ -22,4 +23,10 @@ export const getContacts = async (req: Request, res: Response) => {
         .toArray();
     console.log("hello from getContacts");
     return res.json(items);
+}
+
+export const deleteContact = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    await collections.contacts!.deleteOne({ _id: new ObjectId(id) });
+    return res.status(204).json({ ok: true });
 }

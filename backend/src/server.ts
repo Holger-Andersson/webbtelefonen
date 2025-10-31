@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { initDB } from "./mongodb.js"
 import { signup } from "./Controllers/userController.js"
-import { createContact, getContacts } from "./Controllers/contactsController.js";
+import { createContact, getContacts, deleteContact } from "./Controllers/contactsController.js";
 
 dotenv.config();
 
@@ -18,6 +18,8 @@ app.post('/api/signup', signup);
 app.post('/api/contacts', createContact);
 
 app.get('/api/contacts', getContacts);
+
+app.delete('/api/deleteContact/:id', deleteContact);
 
 
 app.listen(PORT, () => {
