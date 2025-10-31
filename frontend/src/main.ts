@@ -39,15 +39,6 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// container.addEventListener("click", async (e) => {
-//   const target = e.target as HTMLElement;
-//   if(target.getAttribute("data-action") !== "delete") return;
-//   const row = target.closest<HTMLElement>("row");
-//   const id = row?.dataset.id;
-//   if(!id) return;
-// })
-
-
 const list = document.getElementById("contacts-list");
 if (list) {
   list.addEventListener("click", async (event) => {
@@ -63,9 +54,7 @@ if (list) {
       console.log("Kontakten raderad");
       await loadContacts();
     }
-
   })
-
 }
 
 loadContacts();
