@@ -1,49 +1,35 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>webbtelefonen</title>
-  </head>
-  <body>
-    <div>
-      <h1>Telefonboken</h1>
-      <div>      
-      <h2>Create User</h2>
-      <form action="post" id="create-form">
-        <label for="create-email">E-Mail</label>
-        <input id="create-email" type="email" for="email">
-        <label for="create-password">Password</label>
-        <input id="create-password" type="password" name="create-password">
-        <input type="submit" value="Create User">
-      </form>
 
-      </div>
-            <div>      
-      <h2>Login User</h2>
-      <form action="post" id="login-form">
-        <label for="login-email">E-Mail</label>
-        <input id="login-email" type="email" for="email">
-        <label for="login-password">Password</label>
-        <input id="login-password" type="password" name="login-password">
-        <input type="submit" value="Login">
-      </form>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>webbtelefonen</title>
+</head>
 
-      </div>
- <h2>Contacts<h2>
-      <form id="contactForm">
-        <label for="name">Namn</label>
-        <input id="name" name="name" placeholder="Namn...">
-        <label for="phone">Telefonnummer</label>
-        <input id="phone" name="phone" placeholder="Telefonnummer..">
-        <button id="addBtn" type="submit">Lägg till kontakt</button>
-      </form>
- 
-    <div id="loading"></div>
-    <div id="contacts-list"></div>
-</div>
+<body>
+  <div>
+    <h1>Telefonboken</h1>
+  </div>
+  <div id="logout-btn"></div>
+  <div id="signup-div"></div>
+<div>
+    <h2>Login User</h2>
+    <form action="post" id="login-form">
+      <label for="login-email">E-Mail</label>
+      <input id="login-email" type="email" for="email">
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" name="login-password">
+      <input type="submit" value="Login">
+    </form>
+    <div id="logged-in-div"> </div>
+  </div>
+  <div id="loading"></div>
+  <div id="contacts-list"></div>
+  </div>
 
-    <script type="module" src="/src/main.ts" defer></script>
-  </body>
+  <script type="module" src="/src/main.ts" defer></script>
+</body>
+
 </html>

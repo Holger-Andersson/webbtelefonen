@@ -1,28 +1,42 @@
 import './style.css'
 import { createContact, loadContacts } from "./contacts"
 
-const signupForm = document.getElementById("create-form");
+const token = localStorage.getItem("token");
+if (!token) {
 
-signupForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  const signupDiv = document.getElementById("signup-div");
+  signupDiv!.innerHTML = `      
+      <h2>Create User</h2>
+      <form action="post" id="create-form">
+        <label for="create-email">E-Mail</label>
+        <input id="create-email" type="email" for="email">
+        <label for="create-password">Password</label>
+        <input id="create-password" type="password" name="create-password">
+        <input type="submit" value="Create User">
+      </form>
+`
+  const signupForm = document.getElementById("create-form");
 
-  let email = ((document.getElementById("create-email") as HTMLInputElement).value);
-  let password = ((document.getElementById("create-password") as HTMLInputElement).value)
+  signupForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const res = await fetch("/api/signup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      "email": email,
-      "password": password
-    })
+    let email = ((document.getElementById("create-email") as HTMLInputElement).value);
+    let password = ((document.getElementById("create-password") as HTMLInputElement).value)
 
-  });
-  const token = await res.text();
-  console.log(token);
-  localStorage.setItem("token", token);
+    const res = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "email": email,
+        "password": password
+      })
 
-})
+    });
+    const token = await res.text();
+    console.log(token);
+    localStorage.setItem("token", token);
+
+  })
 
 const loginForm = document.getElementById("login-form");
 
@@ -39,16 +53,35 @@ loginForm?.addEventListener("submit", async (e) => {
       "password": password,
     }),
   });
-if (res.status === 200){
+  if (res.status === 200) {
     console.log("Login successful");
     const token = await res.text();
     localStorage.setItem("token", token);
     location.reload();
+  } else {
+    alert(await res.text());
+    location.reload();
+  }
+});
 } else {
-  alert(await res.text());
+
+const loggedInDiv = document.getElementById("logged-in-div");
+loggedInDiv!.innerHTML = `  
+    <h2>Contacts<h2>
+        <form id="contactForm">
+          <label for="name">Namn</label>
+          <input id="name" name="name" placeholder="Namn...">
+          <label for="phone">Telefonnummer</label>
+          <input id="phone" name="phone" placeholder="Telefonnummer..">
+          <button id="addBtn" type="submit">Lägg till kontakt</button>
+        </form>
+`;
+const logoutBtn = document.getElementById("logout-btn");
+logoutBtn.innerHTML = ` <button type="button" id ="logoutBtn">Logga ut</button> `;
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("token");
   location.reload();
-}
-})
+});
 
 const contactForm = document.getElementById("contactForm") as HTMLFormElement;
 
@@ -82,5 +115,6 @@ if (list) {
       await loadContacts();
     }
   })
+}
 }
 loadContacts();
