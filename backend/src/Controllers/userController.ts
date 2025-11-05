@@ -20,3 +20,15 @@ export async function signup(req: Request, res: Response) {
     return res.send(token);
 
 }
+
+export async function loginUser(req: Request, res: Response) {
+    const { email, password } = req.body;
+    const user = await collections.users!.findOne({ email, password });
+
+    if (!user) {
+        return res.status(401).send("Invalid email or password");
+    } else {
+        res.send("Login successful");
+        console.log("User logged in");
+    }
+}

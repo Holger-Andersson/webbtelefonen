@@ -1,9 +1,9 @@
 import './style.css'
 import { createContact, loadContacts } from "./contacts"
 
-const createForm = document.getElementById("create-form");
+const signupForm = document.getElementById("create-form");
 
-createForm?.addEventListener("submit", async (e) => {
+signupForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   let email = ((document.getElementById("create-email") as HTMLInputElement).value);
@@ -21,11 +21,38 @@ createForm?.addEventListener("submit", async (e) => {
   const token = await res.text();
   console.log(token);
   localStorage.setItem("token", token);
+
 })
 
-const form = document.getElementById("contactForm") as HTMLFormElement;
+const loginForm = document.getElementById("login-form");
 
-form.addEventListener("submit", async (e) => {
+loginForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  let email = ((document.getElementById("login-email") as HTMLInputElement).value);
+  let password = ((document.getElementById("login-password") as HTMLInputElement).value)
+
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      "email": email,
+      "password": password,
+    }),
+  });
+if (res.status === 200){
+    console.log("Login successful");
+    const token = await res.text();
+    localStorage.setItem("token", token);
+    location.reload();
+} else {
+  alert(await res.text());
+  location.reload();
+}
+})
+
+const contactForm = document.getElementById("contactForm") as HTMLFormElement;
+
+contactForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   try {
 
@@ -33,7 +60,7 @@ form.addEventListener("submit", async (e) => {
     const phone = (document.getElementById("phone") as HTMLInputElement).value.trim();
     const data = await createContact(name, phone);
 
-    if (data.ok) form.reset();
+    if (data.ok) contactForm.reset();
   } catch (err: any) {
     alert(err.message || "kunde inte spara");
   }
@@ -56,5 +83,4 @@ if (list) {
     }
   })
 }
-
 loadContacts();

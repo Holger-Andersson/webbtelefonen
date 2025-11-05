@@ -1,5 +1,3 @@
-import type { Contact } from "../../backend/src/types";
-
 export async function createContact(name: string, phone: string) {
     const res = await fetch('/api/contacts', {
         method: 'POST',
