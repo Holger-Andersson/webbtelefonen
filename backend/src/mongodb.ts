@@ -1,9 +1,7 @@
 import type { Db, Collection } from "mongodb";
 import { MongoClient } from "mongodb";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import type { User, Contact } from "./types.js";
 
-let mongod: MongoMemoryServer | undefined;
 let client: MongoClient | undefined;
 let db: Db | undefined;
 

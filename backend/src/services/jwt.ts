@@ -13,10 +13,12 @@ export async function generateToken(data: jose.JWTPayload) {
 };
 
 export async function validateToken(token: string) {
+    console.log("Validating token:", token);
     try {
         const { payload } = await jose.jwtVerify(token, secret);
         return payload
     } catch (error) {
+        console.error("jwt verify failed", error);
         console.log(error)
     }
 }

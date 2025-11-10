@@ -13,22 +13,32 @@ export async function signup(req: Request, res: Response) {
         createdAt: new Date(),
     };
 
-    await collections.users!.insertOne(user);
+    const result = await collections.users!.insertOne(user);
 
-    const token = await generateToken({ email: user.email, role: user.role })
-    console.log("User added");
-    return res.send(token);
-
+    console.log("User added", user.email);
+    return res.status(200).send(await generateToken({ email: user.email, _id: result.insertedId.toString() }));
 }
 
 export async function loginUser(req: Request, res: Response) {
-    const { email, password } = req.body;
-    const user = await collections.users!.findOne({ email, password });
+    //tittar om användaren redan är inloggad
+    if (req.headers.authorization) {
+        return res.status(400).send("User already logged in");
+    }
+   const { email, password } = req.body;
 
-    if (!user) {
-        return res.status(401).send("Invalid email or password");
-    } else {
-        res.send("Login successful");
-        console.log("User logged in");
+    try {
+        const user = await collections.users!.findOne({ email: email, password: password });
+
+        if (user) {
+            const token = await generateToken({ email: user.email, _id: user._id.toString() });
+            console.log("User logged in");
+            return res.status(200).send(token);
+        }
+        return res.status(401).send("Internal server error");
+    } catch (error) {
+        console.error("Login error", error);
+        return res.status(500).send("Internal server error");
     }
 }
+
+//DET ÄR NÅGOT MED USERID / _id som inte funkar!! är det ett objekt och hämtas som sträng?

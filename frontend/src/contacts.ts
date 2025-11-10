@@ -1,7 +1,12 @@
+ const token = localStorage.getItem("token");
 export async function createContact(name: string, phone: string) {
-    const res = await fetch('/api/contacts', {
+   
+    const res = await fetch('/api/createContacts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+                'Content-Type': 'application/json',
+                Authorization: token,
+        },
         body: JSON.stringify({ name, phone })
     });
     console.log("createContact, hello");
@@ -12,19 +17,25 @@ export async function createContact(name: string, phone: string) {
 export async function loadContacts() {
     const statusEl = document.getElementById("loading");
     const outputEl = document.getElementById("contacts-list")
-    statusEl!.textContent = "Hämtar kontakter...";
+    statusEl.textContent = "Hämtar kontakter...";
 
     try {
-        const res = await fetch("/api/contacts");
+        const res = await fetch("/api/contacts", {
+            method: "get",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        });
 
         const data = await res.json();
         if (data.length === 0) {
-            outputEl!.textContent = "Din kontaktlista är tom";
+            outputEl.textContent = "Din kontaktlista är tom";
         } else {
-            const container = document.getElementById("contacts-list")!;
+            const container = document.getElementById("contacts-list");
 
             container.innerHTML = "";
-            
+
             for (const item of data) {
                 const row = document.createElement("div");
                 row.className = "row";
@@ -59,8 +70,8 @@ export async function loadContacts() {
         }
         console.log("loadContacts, hello")
     } catch (error: any) {
-        outputEl!.textContent = `${error.message ?? "Gick inte att hämta"}`;
+        outputEl.textContent = `${error.message ?? "Gick inte att hämta"}`;
     } finally {
-        statusEl!.textContent = "";
+        statusEl.textContent = "";
     }
 };
