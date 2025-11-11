@@ -25,4 +25,4 @@ dist-ssr
 
 .env
 
-.backend/src/controllers/phonecontroller.ts
+/backend/src/controllers/phonecontroller.ts
