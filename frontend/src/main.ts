@@ -49,9 +49,9 @@ if (token) {
       const res = await fetch(`/api/deleteContact/${id}`, {
         method: "DELETE",
         headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
+          Authorization: token,
+          "Content-Type": "application/json"
+        },
       });
 
       if (res.ok) {
@@ -121,8 +121,9 @@ if (token) {
 
     const res = await fetch("/api/login", {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         "email": email,
         "password": password,
