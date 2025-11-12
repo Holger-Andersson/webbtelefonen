@@ -13,6 +13,11 @@ export async function signup(req: Request, res: Response) {
         createdAt: new Date(),
     };
 
+    const userExists = await collections.users!.findOne({ email: email });
+    if (userExists) {
+        return res.status(400).send("User already exists");
+    };
+
     const result = await collections.users!.insertOne(user);
 
     console.log("User added", user.email);
@@ -24,7 +29,7 @@ export async function loginUser(req: Request, res: Response) {
     if (req.headers.authorization) {
         return res.status(400).send("User already logged in");
     }
-   const { email, password } = req.body;
+    const { email, password } = req.body;
 
     try {
         const user = await collections.users!.findOne({ email: email, password: password });
@@ -34,11 +39,10 @@ export async function loginUser(req: Request, res: Response) {
             console.log("User logged in");
             return res.status(200).send(token);
         }
-        return res.status(401).send("Internal server error");
     } catch (error) {
         console.error("Login error", error);
         return res.status(500).send("Internal server error");
     }
 }
 
-//DET ÄR NÅGOT MED USERID / _id som inte funkar!! är det ett objekt och hämtas som sträng?
+

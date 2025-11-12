@@ -1,6 +1,6 @@
 import type { Db, Collection } from "mongodb";
 import { MongoClient } from "mongodb";
-import type { User, Contact } from "./types.js";
+import type { User, Contact, SMSData} from "./types.js";
 
 let client: MongoClient | undefined;
 let db: Db | undefined;
@@ -10,6 +10,7 @@ let db: Db | undefined;
 export const collections: {
     users?: Collection<User>;
     contacts?: Collection<Contact>;
+    SMSData?: Collection<SMSData>;
 } = {};
 
 export async function initDB() {
@@ -24,9 +25,10 @@ export async function initDB() {
         console.log("Connected to local MongoDB at mongodb://localhost:27017", db.databaseName);
 
     } else {
-        console.log("mem server not running");
+        console.log("Production DB connection not implemented");
         return;
     }
     collections.users = db.collection<User>("users");
     collections.contacts = db.collection<Contact>("contacts");
+    collections.SMSData = db.collection<SMSData>("SMSData");
 }

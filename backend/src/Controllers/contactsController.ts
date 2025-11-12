@@ -8,7 +8,7 @@ export const createContact = async (req: Request, res: Response) => {
     const doc: Contact = {
         name: name.trim(),
         phone: phone.trim(),
-        userId: new ObjectId(req.user?._id),
+        contactId: new ObjectId(req.user?._id),
         createdAt: new Date(),
     };
     const result = await collections.contacts.insertOne(doc);
@@ -19,7 +19,7 @@ export const createContact = async (req: Request, res: Response) => {
 export const getContacts = async (req: Request, res: Response) => {
     const col = collections.contacts;
     const items = await col
-        .find({ userId: new ObjectId(req.user?._id) })
+        .find({ contactId: new ObjectId(req.user._id) })
         .sort({ createdAt: -1 })
         .toArray();
     console.log("hello from getContacts");
