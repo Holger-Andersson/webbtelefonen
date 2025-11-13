@@ -1,6 +1,6 @@
 import type { Db, Collection } from "mongodb";
 import { MongoClient } from "mongodb";
-import type { User, Contact, SMSData} from "./types.js";
+import type { User, Contact, SMSData } from "../types.js";
 
 let client: MongoClient | undefined;
 let db: Db | undefined;

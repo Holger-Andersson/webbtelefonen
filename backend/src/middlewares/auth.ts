@@ -1,6 +1,6 @@
 import { validateToken } from "../services/jwt.js";
 import { Request, Response, NextFunction } from "express";
-import { collections } from "../mongodb.js"
+import { collections } from "../services/mongodb.js"
 
 
 export async function auth(req: Request, res: Response, next: NextFunction) {
@@ -14,7 +14,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     let user: any;
     //fetcha användaren från databasen om token är giltig
     try {
-        
+
         user = await validateToken(req.headers.authorization);
     } catch (error) {
         console.error(error);

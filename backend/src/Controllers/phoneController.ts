@@ -1,19 +1,17 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { Request, Response } from "express";
-import { collections } from "../mongodb.js";
+import { collections } from "../services/mongodb.js";
 import { ObjectId } from "mongodb";
 
-// credentials för elks api från .env
 
-
-
+let username = process.env.ELKS_USERNAME;
+const password = process.env.ELKS_PASSWORD;
+const sender = process.env.ELKS_SENDER;
+const auth = Buffer.from(username + ":" + password).toString("base64");
 
 //skicka sms till kontakt via elk46
 export async function sendSMS(req: Request, res: Response) {
-    const username = process.env.ELKS_USERNAME;
-    const password = process.env.ELKS_PASSWORD;
-    const sender = process.env.ELKS_SENDER;
-    const auth = Buffer.from(username + ":" + password).toString("base64");
-
     const { contactId, message } = req.body;
     const contact = await collections.contacts.findOne({ _id: new ObjectId(contactId as string) })
 
@@ -46,7 +44,7 @@ export async function sendSMS(req: Request, res: Response) {
                 responseJSON.contactId = contact._id;
 
                 await collections.SMSData.insertOne(responseJSON);
-                return res.status(200).send("Message sent and saved to history");
+                return res.status(200).send("Meddelande skickat");
             } else {
                 console.error("46Elks failed to send message ", responseJSON);
                 res
@@ -63,9 +61,7 @@ export async function sendSMS(req: Request, res: Response) {
     }
 }
 
-
 // Ringa samtal via 46elks API 
-
 export async function prankCall(req: Request, res: Response) {
     const username = process.env.ELKS_USERNAME;
     const password = process.env.ELKS_PASSWORD;
@@ -80,9 +76,12 @@ export async function prankCall(req: Request, res: Response) {
         to: contact.phone,
         voice_start: JSON.stringify({
             recordcall: "https://46elks.vercel.app/recordings",
-            play: "https://46elks.vercel.app/mp3",
+            play: "https://soundboardmp3.com/wp-content/uploads/2025/06/i-will-send-you-to-jesus.mp3",
         })
     };
+    //think fast: https://soundboardmp3.com/wp-content/uploads/2025/06/think-fast-chucklenuts_3ATncZo.mp3
+    //jesus: https://soundboardmp3.com/wp-content/uploads/2025/06/i-will-send-you-to-jesus.mp3
+    //https://46elks.vercel.app/mp3
 
     const URLSearchParamsString = new URLSearchParams(data).toString();
     try {

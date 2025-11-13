@@ -1,5 +1,6 @@
 import './style.css'
-import { createContact, loadContacts, SendSMS, prankCall } from "./contacts"
+import { createContact, loadContacts, updateContact, deleteContact } from "./contacts"
+import { sendSMS, prankCall } from "./phone"
 
 const token = localStorage.getItem("token");
 if (token) {
@@ -48,24 +49,15 @@ if (token) {
       const delBtn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='delete']");
       if (delBtn) {
         const contactId = delBtn.dataset.contactId;
-        console.log(contactId);
-        const res = await fetch(`/api/deleteContact/${contactId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: token,
-            "Content-Type": "application/json"
-          },
-        });
 
-        if (res.ok) {
-          console.log("Kontakten raderad");
-          await loadContacts();
-        } else {
-          alert(await res.text());
+        try {
+          console.log(contactId);
+          await deleteContact(token, contactId);
+
+        } catch (err: any) {
+          alert(err.message || "kunde inte radera kontakt");
         }
-        return;
       }
-
       const sendBtn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='send-sms']");
       if (sendBtn) {
         const contactId = sendBtn.dataset.contactId;
@@ -78,10 +70,59 @@ if (token) {
         }
 
         try {
-          await SendSMS(token, contactId!, message);
-          alert("Meddelande skickat!");
+          await sendSMS(token, contactId, message);
         } catch (err: any) {
           alert(err.message || "Kunde inte skicka meddelandet");
+        }
+      }
+
+      const editBtn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='edit']");
+      if (editBtn) {
+        const contactId = editBtn.dataset.contactId;
+        const row = editBtn.closest(".row") as HTMLDivElement;
+
+        //Hitta fälten som ska editas
+        const nameEl = row.children[0] as HTMLDivElement;
+        const phoneEl = row.children[1] as HTMLDivElement;
+        const isEditing = row.dataset.editing === "true";
+
+        if (!isEditing) {
+          const currentName = nameEl.textContent.replace("Namn: ", "");
+          const currentPhone = phoneEl.textContent.replace("Telefon: ", "");
+
+          const nameInput = document.createElement("input");
+          nameInput.value = currentName;
+          nameInput.dataset.field = "name";
+
+          const phoneInput = document.createElement("input");
+          phoneInput.value = currentPhone;
+          phoneInput.dataset.field = "phone";
+
+          //Ersätter befintlig data med den nya
+          nameEl.replaceWith(nameInput);
+          phoneEl.replaceWith(phoneInput);
+
+          row.dataset.editing = "true";
+          editBtn.textContent = "Save";
+          return;
+
+        } else {
+          const nameInput = row.querySelector('input[data-field="name"]') as HTMLInputElement;
+          const phoneInput = row.querySelector('input[data-field="phone"]') as HTMLInputElement;
+
+          const newName = nameInput.value.trim();
+          const newPhone = phoneInput.value.trim();
+
+          try {
+            await updateContact(token, contactId, newName, newPhone);
+            await loadContacts();
+          } catch (err: any) {
+            alert(err.message || "Kunde inte uppdatera kontakten");
+            return;
+          }
+          row.dataset.editing = "false";
+          editBtn.textContent = "Edit";
+          return;
         }
       }
 
@@ -115,7 +156,7 @@ if (token) {
 `;
   const signupForm = document.getElementById("create-form");
 
-  signupForm?.addEventListener("submit", async (e) => {
+  signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     let email = ((document.getElementById("create-email") as HTMLInputElement).value);
@@ -134,6 +175,7 @@ if (token) {
       const token = await res.text();
       console.log(token);
       localStorage.setItem("token", token);
+      location.reload();
     } else {
       alert(await res.text());
       location.reload();

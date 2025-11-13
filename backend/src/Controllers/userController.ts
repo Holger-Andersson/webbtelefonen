@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import type { User } from "../types.js"
 import { generateToken } from "../services/jwt.js"
-import { collections } from "../mongodb.js"
+import { collections } from "../services/mongodb.js"
 
 export async function signup(req: Request, res: Response) {
     const { email, password } = req.body;

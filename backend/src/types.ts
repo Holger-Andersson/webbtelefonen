@@ -18,7 +18,6 @@ export type SMSData = {
   message: string;
 }
 
-
 //globla deklaration för få med user i req objektet.
 import type { ObjectId } from "mongodb";
 

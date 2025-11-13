@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import type { Contact } from "../types.js"
 import { ObjectId } from "mongodb"
-import { collections } from "../mongodb.js";
+import { collections } from "../services/mongodb.js";
 
 export const createContact = async (req: Request, res: Response) => {
     const { name, phone } = req.body ?? {};
@@ -26,6 +26,25 @@ export const getContacts = async (req: Request, res: Response) => {
     return res.json(items);
 }
 
+export const updateContact = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { name, phone } = req.body;
+
+        const result = await collections.contacts.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { name, phone } }
+        );
+        if (result.matchedCount === 0) {
+            return res.status(404).send("Contact is nowhere to be seen");
+        }
+        return res.status(200).send("Contact updated");
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send("Internal Server Error")
+    }
+
+}
 export const deleteContact = async (req: Request, res: Response) => {
     const id = req.params.id;
     await collections.contacts.deleteOne({ _id: new ObjectId(id) });

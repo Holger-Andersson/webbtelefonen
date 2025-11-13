@@ -1,4 +1,5 @@
 const token = localStorage.getItem("token");
+
 export async function createContact(name: string, phone: string) {
 
     const res = await fetch('/api/createContacts', {
@@ -12,6 +13,39 @@ export async function createContact(name: string, phone: string) {
     console.log("createContact, hello");
     loadContacts();
     return res.json();
+}
+
+export async function deleteContact(token: string, contactId: string) {
+    const res = await fetch(`/api/deleteContact/${contactId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: token,
+            "Content-Type": "application/json"
+        },
+    });
+
+    if (res.ok) {
+        console.log("Kontakten raderad");
+        await loadContacts();
+    } else {
+        alert(await res.text());
+    }
+}
+
+export async function updateContact(token: string, contactId: string, name: string, phone: string) {
+    const res = await fetch(`/api/contacts/edit/${contactId}`, {
+        method: "PUT",
+        headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, phone }),
+    });
+    if (res.status === 200) {
+        alert("Contact edited");
+    } else {
+        alert(res.text());
+    }
 }
 
 export async function loadContacts() {
@@ -56,9 +90,14 @@ export async function loadContacts() {
                 const delBtn = document.createElement("button");
                 delBtn.type = "button";
                 delBtn.textContent = "Delete";
-                delBtn.className = "btn";
                 delBtn.dataset.action = "delete";
                 delBtn.dataset.contactId = item._id;
+
+                const editBtn = document.createElement("button");
+                editBtn.type = "button";
+                editBtn.textContent = "Edit";
+                editBtn.dataset.action = "edit";
+                editBtn.dataset.contactId = item._id;
 
                 const sendBtn = document.createElement("button");
                 sendBtn.type = "button";
@@ -75,14 +114,14 @@ export async function loadContacts() {
                 row.appendChild(nameEl);
                 row.appendChild(phoneEl);
                 row.appendChild(messageEl);
+                row.appendChild(editBtn);
                 row.appendChild(delBtn);
                 row.appendChild(sendBtn);
                 row.appendChild(prankCallBtn);
 
-                //lägger dtill raderna i containern
+                //lägger dtill i containern
                 container.appendChild(row);
             }
-
         }
         console.log("loadContacts, hello")
     } catch (error: any) {
@@ -92,31 +131,3 @@ export async function loadContacts() {
     }
 };
 
-export async function SendSMS(token: string, contactId: string, message: string) {
-
-    const res = await fetch("/api/sms/send", {
-        method: "POST",
-        headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ contactId: contactId, message: message }),
-    });
-    if (res.status === 200) {
-        alert(await res.text());
-        location.reload();
-    }
-}
-
-export async function prankCall(token: string, contactId: string) {
-    const res = await fetch("/api/phone/prankcall", {
-        method: "POST",
-        headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ contactId: contactId }),
-    });
-    alert(await res.text());
-    location.reload();
-}
