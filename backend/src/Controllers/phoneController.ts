@@ -2,29 +2,29 @@ import { Request, Response } from "express";
 import { collections } from "../mongodb.js";
 import { ObjectId } from "mongodb";
 
-// ringa samtal och ta knapptryck
-const username = process.env.ELKS_USERNAME;
-const password = process.env.ELKS_PASSWORD;
-const sender = process.env.ELKS_SENDER;
+// credentials för elks api från .env
 
-const auth = Buffer.from(username + ":" + password).toString("base64");
 
+
+
+//skicka sms till kontakt via elk46
 export async function sendSMS(req: Request, res: Response) {
+    const username = process.env.ELKS_USERNAME;
+    const password = process.env.ELKS_PASSWORD;
+    const sender = process.env.ELKS_SENDER;
+    const auth = Buffer.from(username + ":" + password).toString("base64");
+
     const { contactId, message } = req.body;
-    console.log("ELKS_USERNAME len:", (process.env.ELKS_USERNAME ?? "").length);
-    console.log("ELKS_PASSWORD len:", (process.env.ELKS_PASSWORD ?? "").length);
-    console.log("ELKS_SENDER:", process.env.ELKS_SENDER);
-    console.log("Sender:", sender);
     const contact = await collections.contacts.findOne({ _id: new ObjectId(contactId as string) })
 
     let data = {
         from: sender,
         to: contact.phone,
         message: message,
-        // dryrun: "yes",
+        // dryrun: "yes", för att testa utan att skicka "riktigt" sms
     }
 
-    const URLSearchParamsString  = new URLSearchParams(data).toString();
+    const URLSearchParamsString = new URLSearchParams(data).toString();
 
     try {
         const response = await fetch("https://api.46elks.com/a1/sms", {
@@ -63,33 +63,49 @@ export async function sendSMS(req: Request, res: Response) {
     }
 }
 
-// // skicka smsm % ta emot sms
 
-// // ringa samtal
-// import type { PhoneData } from "../types.js"
+// Ringa samtal via 46elks API 
 
-// export async function makePhoneCall(req: Request, res: Response) {
-//     const url = "https://api.46elks.com/a1/calls";
-//     let data = {
-//         from: "+46700000000",
-//         to: "+46700000000",
-//         voice_start: { "https://example.com/answer": any; };
-//     };
-//     data = new URLSearchParams(data).toString();
-//     data = data.toString();
+export async function prankCall(req: Request, res: Response) {
+    const username = process.env.ELKS_USERNAME;
+    const password = process.env.ELKS_PASSWORD;
+    const phone = process.env.ELKS_PHONE;
+    const auth = Buffer.from(username + ":" + password).toString("base64");
 
-//     try {
-//         const res = await fetch(url, {
-//             method: "POST",
-//             headers: {
-//                 Authorization: "Basic " + auth,
+    const { contactId } = req.body;
+    const contact = await collections.contacts.findOne({ _id: new ObjectId(contactId as string) })
 
-//             }
-//    body: data,
-//         });
-//         console.log(res.data);
-//     } catch (error) {
-//         console.error(error);
-//         return;
-//     }
-// }
+    let data = {
+        from: phone,
+        to: contact.phone,
+        voice_start: JSON.stringify({
+            recordcall: "https://46elks.vercel.app/recordings",
+            play: "https://46elks.vercel.app/mp3",
+        })
+    };
+
+    const URLSearchParamsString = new URLSearchParams(data).toString();
+    try {
+        const response = await fetch("https://api.46elks.com/a1/calls", {
+            method: "POST",
+            headers: {
+                "Authorization": "Basic " + auth,
+            },
+            body: URLSearchParamsString,
+        });
+
+        const responseJSON = await response.json();
+
+        if (responseJSON.state === "ongoing") {
+            return res
+                .status(200)
+                .send("Du ringer kontakten, du kan snart lyssna på inspelningen");
+        } else {
+            console.error(responseJSON);
+            return res.status(500).send("Ditt prank lyckades inte, pröva ring igen.");
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("Internal Server Error!");
+    }
+}

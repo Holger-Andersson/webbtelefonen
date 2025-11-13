@@ -4,7 +4,7 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev:srv": "cross-env NODE_ENV=test tsx watch src/server.ts --env-file",
+    "dev:srv": "cross-env NODE_ENV=test tsx watch src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

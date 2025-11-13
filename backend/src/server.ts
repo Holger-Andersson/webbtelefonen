@@ -4,7 +4,7 @@ import express from "express";
 import { initDB } from "./mongodb.js"
 import { signup, loginUser } from "./Controllers/userController.js";
 import { createContact, getContacts, deleteContact } from "./Controllers/contactsController.js";
-import { sendSMS } from "./Controllers/phoneController.js";
+import { sendSMS, prankCall } from "./Controllers/phoneController.js";
 import { auth } from "./middlewares/auth.js";
 
 
@@ -26,6 +26,8 @@ app.get('/api/contacts', auth, getContacts);
 app.delete('/api/deleteContact/:id', auth, deleteContact);
 
 app.post('/api/sms/send', auth, sendSMS);
+
+app.post('/api/phone/prankcall', auth, prankCall);
 
 app.listen(PORT, () => {
     console.log(`API is running from ${PORT}`);

@@ -1,5 +1,5 @@
 import './style.css'
-import { createContact, loadContacts } from "./contacts"
+import { createContact, loadContacts, SendSMS, prankCall } from "./contacts"
 
 const token = localStorage.getItem("token");
 if (token) {
@@ -17,7 +17,9 @@ if (token) {
         </form>
 `;
   const logoutBtn = document.getElementById("logout-btn");
-  logoutBtn.innerHTML = ` <button type="button" id ="logoutBtn">Logga ut</button> `;
+  logoutBtn.innerHTML = `
+  <button type="button" id="logoutBtn">Logga ut</button>
+  `;
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     location.reload();
@@ -42,25 +44,61 @@ if (token) {
   const list = document.getElementById("contacts-list");
   if (list) {
     list.addEventListener("click", async (event) => {
-      const btn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='delete']");
-      if (!btn) return;
-      const id = btn.dataset.id;
-      console.log(id);
-      const res = await fetch(`/api/deleteContact/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json"
-        },
-      });
 
-      if (res.ok) {
-        console.log("Kontakten raderad");
-        await loadContacts();
+      const delBtn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='delete']");
+      if (delBtn) {
+        const contactId = delBtn.dataset.contactId;
+        console.log(contactId);
+        const res = await fetch(`/api/deleteContact/${contactId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json"
+          },
+        });
+
+        if (res.ok) {
+          console.log("Kontakten raderad");
+          await loadContacts();
+        } else {
+          alert(await res.text());
+        }
+        return;
+      }
+
+      const sendBtn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='send-sms']");
+      if (sendBtn) {
+        const contactId = sendBtn.dataset.contactId;
+        const textarea = document.getElementById(`contact-sms-message-input-${contactId}`) as HTMLTextAreaElement;
+        const message = textarea.value;
+
+        if (!message) {
+          alert("Skriv något först");
+          return;
+        }
+
+        try {
+          await SendSMS(token, contactId!, message);
+          alert("Meddelande skickat!");
+        } catch (err: any) {
+          alert(err.message || "Kunde inte skicka meddelandet");
+        }
+      }
+
+      const prankCallBtn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-action='prank-call']");
+      if (prankCallBtn) {
+        const contactId = prankCallBtn.dataset.contactId;
+        console.log("prankcallknapp");
+        try {
+          await prankCall(token, contactId!);
+        } catch (error: any) {
+          alert(error.message || "Kunde inte ringa");
+        }
       }
     });
   }
   loadContacts();
+
 } else {
   console.log("User not logged in");
 
@@ -139,4 +177,4 @@ if (token) {
       location.reload();
     }
   });
-};
+}
