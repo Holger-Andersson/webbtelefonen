@@ -76,12 +76,13 @@ export async function prankCall(req: Request, res: Response) {
         to: contact.phone,
         voice_start: JSON.stringify({
             recordcall: "https://46elks.vercel.app/recordings",
-            play: "https://soundboardmp3.com/wp-content/uploads/2025/06/i-will-send-you-to-jesus.mp3",
+            play: "https://www.myinstants.com/media/sounds/yodascreamingfunny.mp3",
         })
     };
     //think fast: https://soundboardmp3.com/wp-content/uploads/2025/06/think-fast-chucklenuts_3ATncZo.mp3
     //jesus: https://soundboardmp3.com/wp-content/uploads/2025/06/i-will-send-you-to-jesus.mp3
     //https://46elks.vercel.app/mp3
+    //https://www.myinstants.com/media/sounds/yodascreamingfunny.mp3 c
 
     const URLSearchParamsString = new URLSearchParams(data).toString();
     try {

@@ -11,9 +11,9 @@ if (token) {
     <h2>Contacts<h2>
         <form id="contactForm">
           <label for="name">Namn</label>
-          <input id="name" name="name" placeholder="Namn...">
+          <input class="input" id="name" name="name" placeholder="Namn...">
           <label for="phone">Telefonnummer</label>
-          <input id="phone" name="phone" placeholder="Telefonnummer..">
+          <input class="input" id="phone" name="phone" placeholder="Telefonnummer..">
           <button id="addBtn" type="submit">Lägg till kontakt</button>
         </form>
 `;
@@ -91,10 +91,12 @@ if (token) {
           const currentPhone = phoneEl.textContent.replace("Telefon: ", "");
 
           const nameInput = document.createElement("input");
+          nameInput.className = "input"; 
           nameInput.value = currentName;
           nameInput.dataset.field = "name";
 
           const phoneInput = document.createElement("input");
+          phoneInput.className = "input"; 
           phoneInput.value = currentPhone;
           phoneInput.dataset.field = "phone";
 
@@ -148,9 +150,9 @@ if (token) {
       <h2>Create User</h2>
       <form method="post" id="create-form">
         <label for="create-email">E-Mail</label>
-        <input id="create-email" type="email" name="email">
+        <input class="input" id="create-email" type="email" name="email">
         <label for="create-password">Password</label>
-        <input id="create-password" type="password" name="create-password">
+        <input class="input" id="create-password" type="password" name="create-password">
         <input type="submit" value="Create User">
       </form>
 `;
@@ -187,9 +189,9 @@ if (token) {
     <h2>Login User</h2>
     <form action="post" id="login-form">
       <label for="login-email">E-Mail</label>
-      <input id="login-email" type="email" for="email">
+      <input class="input" id="login-email" type="email" for="email">
       <label for="login-password">Password</label>
-      <input id="login-password" type="password" name="login-password">
+      <input class="input" id="login-password" type="password" name="login-password">
       <input type="submit" value="Login">
     </form>
     `;
